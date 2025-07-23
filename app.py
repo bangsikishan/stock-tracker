@@ -1,8 +1,9 @@
 import os
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 from itertools import groupby
 from operator import itemgetter
 
+import requests
 from dotenv import load_dotenv
 from flask import Flask, jsonify, redirect, render_template, request, url_for
 from flask_supabase import Supabase
@@ -17,6 +18,19 @@ app.config["SUPABASE_URL"] = os.getenv("SUPABASE_URL")
 app.config["SUPABASE_KEY"] = os.getenv("SUPABASE_KEY")
 
 supabase_ext = Supabase(app)
+
+
+def get_today_timestamp():
+    # Define your timezone UTC+05:45
+    offset_minutes = 5 * 60 + 45
+    tz = timezone(timedelta(minutes=offset_minutes))
+
+    # Get current local datetime with timezone
+    now = datetime.now(tz)
+
+    # Convert to UTC and get Unix timestamp
+    now_utc = now.astimezone(timezone.utc)
+    return int(now_utc.timestamp())
 
 
 @app.route("/")
@@ -46,6 +60,25 @@ def home():
     total_value = sum(stock["price"] * stock["unit"] for stock in stocks_list)
     unique_symbols = {stock["symbol"] for stock in stocks_list if stock["symbol"]}
     total_stocks = len(unique_symbols)
+
+    symbol_opening_prices = {}
+    timestamp = get_today_timestamp()
+    for symbol in unique_symbols:
+        response = requests.get(
+            f"https://merolagani.com/handlers/TechnicalChartHandler.ashx?type=get_advanced_chart&symbol={symbol}&resolution=1D&rangeStartDate=1719121913&rangeEndDate={timestamp}&from=&isAdjust=1&currencyCode=NPR",
+        )
+
+        try:
+            symbol_opening_prices[symbol] = float(response.json().get("o")[-1])
+        except (TypeError, IndexError, ValueError):
+            symbol_opening_prices[symbol] = None
+
+    for stock in stocks_list:
+        opening_price = symbol_opening_prices.get(stock["symbol"])
+        if opening_price is not None:
+            stock["profit_loss"] = round(
+                (opening_price - stock["price"]) * stock["quantity"], 2
+            )
 
     # Sort and group by symbol
     stocks_list.sort(key=itemgetter("symbol"))
