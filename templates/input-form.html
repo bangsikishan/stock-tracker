@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add Stock - Stock Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+    <style>
+        .backdrop-blur-sm {
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 p-3 sm:p-4">
+    <div class="min-h-screen flex items-center justify-center">
+        <div class="w-full max-w-md">
+            <!-- Header -->
+            <div class="text-center mb-6 sm:mb-8">
+                <div class="flex justify-center mb-4">
+                    <div class="p-3 bg-emerald-500/20 rounded-xl">
+                        <i data-lucide="plus-circle" class="w-8 h-8 sm:w-10 sm:h-10 text-emerald-400"></i>
+                    </div>
+                </div>
+                <h1 class="text-2xl sm:text-3xl font-bold text-white mb-2">Add Stock Purchase</h1>
+                <p class="text-slate-400 text-sm sm:text-base">Track your new investment</p>
+            </div>
+
+            <!-- Form Card -->
+            <div class="bg-slate-800/50 border border-slate-700 backdrop-blur-sm rounded-xl shadow-2xl p-6 sm:p-8">
+                <form id="stockForm" class="space-y-5 sm:space-y-6">
+                    <!-- Stock Symbol -->
+                    <div>
+                        <label for="symbol" class="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                            <i data-lucide="trending-up" class="w-4 h-4 text-emerald-400"></i>
+                            Stock Symbol
+                        </label>
+                        <input
+                            type="text"
+                            id="symbol"
+                            name="symbol"
+                            placeholder="e.g., AAPL"
+                            class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200 text-sm sm:text-base"
+                            required
+                        >
+                    </div>
+
+                    <!-- Price per Stock -->
+                    <div>
+                        <label for="price" class="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                            <i data-lucide="dollar-sign" class="w-4 h-4 text-emerald-400"></i>
+                            Price per Stock (NPR)
+                        </label>
+                        <input
+                            type="number"
+                            id="price"
+                            name="price"
+                            step="0.01"
+                            min="0"
+                            placeholder="e.g., 1500.50"
+                            class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200 text-sm sm:text-base"
+                            required
+                        >
+                    </div>
+
+                    <!-- Number of Stocks -->
+                    <div>
+                        <label for="quantity" class="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                            <i data-lucide="hash" class="w-4 h-4 text-emerald-400"></i>
+                            Number of Stocks
+                        </label>
+                        <input
+                            type="number"
+                            id="quantity"
+                            name="quantity"
+                            min="1"
+                            placeholder="e.g., 100"
+                            class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white placeholder-slate-400 transition-all duration-200 text-sm sm:text-base"
+                            required
+                        >
+                    </div>
+
+                    <!-- Date Purchased -->
+                    <div>
+                        <label for="date" class="block text-sm font-medium text-slate-300 mb-2 flex items-center gap-2">
+                            <i data-lucide="calendar" class="w-4 h-4 text-emerald-400"></i>
+                            Date Purchased
+                        </label>
+                        <input
+                            type="date"
+                            id="date"
+                            name="date"
+                            class="w-full px-4 py-3 bg-slate-900/50 border border-slate-600 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 text-white transition-all duration-200 text-sm sm:text-base"
+                            required
+                        >
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button
+                        type="submit"
+                        id="submitBtn"
+                        class="w-full bg-emerald-500 hover:bg-emerald-600 text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 shadow-lg hover:shadow-emerald-500/25 flex items-center justify-center gap-2 text-sm sm:text-base touch-manipulation"
+                    >
+                        <i data-lucide="plus" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                        <span id="submitText">Add Stock</span>
+                    </button>
+
+                    <!-- Back to Portfolio Button -->
+                    <button
+                        type="button"
+                        onclick="window.location.href='/'"
+                        class="w-full bg-slate-700/50 hover:bg-slate-600/50 text-slate-300 hover:text-white font-medium py-3 px-6 rounded-lg transition-all duration-200 flex items-center justify-center gap-2 text-sm sm:text-base touch-manipulation"
+                    >
+                        <i data-lucide="arrow-left" class="w-4 h-4 sm:w-5 sm:h-5"></i>
+                        Back to Portfolio
+                    </button>
+                </form>
+            </div>
+
+            <!-- Success Message -->
+            <div id="successMessage" class="hidden mt-4 p-4 bg-emerald-500/20 border border-emerald-500/50 rounded-lg">
+                <div class="flex items-center gap-2 text-emerald-400">
+                    <i data-lucide="check-circle" class="w-5 h-5"></i>
+                    <span class="font-medium">Stock added successfully!</span>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div id="errorMessage" class="hidden mt-4 p-4 bg-red-500/20 border border-red-500/50 rounded-lg">
+                <div class="flex items-center gap-2 text-red-400">
+                    <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                    <span class="font-medium" id="errorText">Something went wrong. Please try again.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set today's date as default
+        document.getElementById('date').valueAsDate = new Date();
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+
+        function showMessage(type, message) {
+            const successMsg = document.getElementById('successMessage');
+            const errorMsg = document.getElementById('errorMessage');
+            
+            // Hide both messages first
+            successMsg.classList.add('hidden');
+            errorMsg.classList.add('hidden');
+            
+            if (type === 'success') {
+                successMsg.classList.remove('hidden');
+                setTimeout(() => {
+                    successMsg.classList.add('hidden');
+                }, 3000);
+            } else if (type === 'error') {
+                document.getElementById('errorText').textContent = message;
+                errorMsg.classList.remove('hidden');
+                setTimeout(() => {
+                    errorMsg.classList.add('hidden');
+                }, 5000);
+            }
+        }
+
+        function setLoading(isLoading) {
+            const submitBtn = document.getElementById('submitBtn');
+            const submitText = document.getElementById('submitText');
+            
+            if (isLoading) {
+                submitBtn.disabled = true;
+                submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+                submitText.textContent = 'Adding Stock...';
+            } else {
+                submitBtn.disabled = false;
+                submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+                submitText.textContent = 'Add Stock';
+            }
+        }
+
+        document.getElementById('stockForm').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            setLoading(true);
+            
+            const formData = {
+                symbol: document.getElementById('symbol').value.toUpperCase().trim(),
+                price: parseFloat(document.getElementById('price').value),
+                quantity: parseInt(document.getElementById('quantity').value),
+                date: document.getElementById('date').value
+            };
+            
+            // Validation
+            if (!formData.symbol || formData.price <= 0 || formData.quantity <= 0 || !formData.date) {
+                showMessage('error', 'Please fill in all fields with valid values.');
+                setLoading(false);
+                return;
+            }
+            
+            try {
+                const response = await fetch('/submit_data', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                const data = await response.json();
+                if(data.redirect_url){
+                    window.location.href = data.redirect_url;
+                }
+                
+                /* 
+                    showMessage('success', 'Stock added successfully!');
+                    this.reset();
+                    document.getElementById('date').valueAsDate = new Date();
+                    
+                    // Optional: Redirect after success
+                    setTimeout(() => {
+                        // window.location.href = 'index.html';
+                    }, 2000);
+                */
+                
+            } catch (error) {
+                console.error("Error sending data:", error);
+                showMessage('error', 'Failed to add stock. Please try again.');
+            } finally {
+                setLoading(false);
+            }
+        });
+
+        // Auto-uppercase stock symbol as user types
+        document.getElementById('symbol').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        // Format price input to 2 decimal places on blur
+        document.getElementById('price').addEventListener('blur', function(e) {
+            if (e.target.value) {
+                e.target.value = parseFloat(e.target.value).toFixed(2);
+            }
+        });
+    </script>
+</body>
+</html>
