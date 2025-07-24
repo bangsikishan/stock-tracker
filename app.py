@@ -43,8 +43,12 @@ def home():
     if "user" not in session:
         return redirect(url_for("login"))
 
+    id = session.get("id")
+
     # Fetch all records
-    response = supabase_ext.client.from_("stocks").select("*").execute()
+    response = (
+        supabase_ext.client.from_("stocks").select("*").eq("user_id", id).execute()
+    )
     stocks_list = response.data or []
 
     # Transform each stock record: add `total_value` and parse `date`
@@ -121,6 +125,7 @@ def submit_data():
         data = request.json
 
         record = {
+            "user_id": session.get("id"),
             "symbol": data.get("symbol"),
             "price": data.get("price"),
             "unit": data.get("quantity"),
@@ -173,10 +178,10 @@ def login():
                 return jsonify({"success": False, "message": "User not found"}), 401
 
             user = response.data[0]
-            print(user)
             stored_hash = user["password"]
 
             if check_password_hash(stored_hash, password):
+                session["id"] = user["id"]
                 session["user"] = user["username"]
                 session.permanent = remember
                 return jsonify({"success": True, "message": "Login successful"})
@@ -197,6 +202,7 @@ def logout():
     if "user" not in session:
         return redirect(url_for("login"))
 
+    session.pop("id", None)
     session.pop("user", None)
     return redirect(url_for("login"))
 
